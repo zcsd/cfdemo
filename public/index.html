@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"> 
+<title>Cloudflare Pages Demo</title> 
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  
+<h2 style="color: green;">Demo Cloudflare Pages with serverless Functions</h3>
+<h4 style="color: purple;">Check <a href="https://linzichun.com/posts/Cloudflare_pages_function/" target="_blank">this blog post</a> on how to build a dynamic website with zero cost! </h4>
+<h4 style="color: black;">Following submission, your input will be saved in a cloud database, and the message that was returned from the backend will be shown below.</h4>
+
+<div>
+  <form>
+    <label for="nname">Nickname (at least 5 alphanumeric characters)</label>
+    <input type="text" id="nname" name="nickname" placeholder="Your nickname.." pattern="[A-Za-z0-9]{5,20}" required>
+
+    <label for="fruit">I prefer to eat</label>
+    <select id="fruit" name="fruit">
+      <option value="apple">Apple</option>
+      <option value="grape">Grape</option>
+      <option value="watermelon">Watermelon</option>
+    </select>
+  
+    <input type="button" onclick="submitNow()" value="Submit">
+  </form>
+  <p id="message" style="font-size:18px"></p>
+</div>
+
+<script>
+function submitNow() {
+  if (!document.getElementById('nname').value.match(/^[A-Za-z0-9]{5,20}$/)) {
+    document.getElementById("message").innerHTML = "<span style='color: red;'>Submit Error: Nickname must be at least 5 alphanumeric characters.</span>";
+    return;
+  } else {
+    document.getElementById("message").innerHTML = "<span style='color: green;'>Submitting and waiting the reply.....</span>";
+		const dataToSend = {
+			"nickname": document.getElementById("nname").value,
+			"fruit": document.getElementById("fruit").value,
+		}
+
+  fetch("/api/submit", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8',
+    },
+    body: JSON.stringify(dataToSend)
+  })
+    .then(response => response.json())
+    .then(dataReceived => {
+      if(dataReceived.ok) {
+        document.getElementById("message").innerHTML = "<span style='color: blue;'>" + dataReceived.message + "</span>";
+      }
+    })
+    .catch(err => {
+      console.log(err);
+    })	
+  }
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+# .gitignore
+.DS_Store
+*-lock.*
+*.lock
+*.log
+node_modules/*
+.dev.vars
