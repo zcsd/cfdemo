@@ -72,7 +72,7 @@ async function sendToDBPostgres(ctx, info, time, country) {
         body: JSON.stringify(infoDoc),
     };
 
-    await fetch(ctx.env.GRES_URL, config)
+    await fetch(ctx.env.POSTGRES_URL, config)
     .then(response => response.json())
     .then(data => {
         console.log(data);
@@ -91,7 +91,7 @@ async function countFruitPostgres(ctx, fruitName) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': ctx.env.AUTH_KEY,
+            'Authorization': ctx.env.POSTGRES_KEY,
         },
         body: JSON.stringify(infoDoc),
     };
