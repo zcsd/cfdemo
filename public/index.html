@@ -22,6 +22,12 @@
       <option value="grape">Grape</option>
       <option value="watermelon">Watermelon</option>
     </select>
+    
+    <label for="database">Choose database to query</label>
+    <select id="database" name="database">
+      <option value="mongo">Mongo Atlas (Singapore AWS) - via official Data API</option>
+      <option value="postgres">Self-Hosted PostgreSQL (Singapore Alibaba Cloud) - via Cloudflare Workers</option>
+    </select>
   
     <input type="button" onclick="submitNow()" value="Submit">
   </form>
@@ -38,6 +44,7 @@ function submitNow() {
 		const dataToSend = {
 			"nickname": document.getElementById("nname").value,
 			"fruit": document.getElementById("fruit").value,
+      "database": document.getElementById("database").value
 		}
 
   fetch("/api/submit", {
