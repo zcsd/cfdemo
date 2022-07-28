@@ -26,8 +26,8 @@
             const selectTime = t1 - t0;
     
             var message = "You (" + submitInfo.nickname + " from " + country + ") are the " + count.toString() + "th person who prefers " + submitInfo.fruit + " in the PostgreSQL database. <br>"
-            message += "<span style='color:olive'>It took " + insertTime + " ms to INSERT to self-hosted PostgreSQL (Singapore Alibaba Cloud). </span><br>";
-            message += "<span style='color:olive'>It took " + selectTime + " ms to SELECT from self-hosted PostgreSQL (Singapore Alibaba Cloud). </span><br>"; 
+            message += "<span style='color:olive'>It took " + insertTime + " ms to INSERT to self-hosted PostgreSQL in Hong Kong Azure. </span><br>";
+            message += "<span style='color:olive'>It took " + selectTime + " ms to SELECT from self-hosted PostgreSQL in Hong Kong Azure. </span><br>"; 
         } else if (submitInfo.database == 'mongo') {
             var t0 = Date.now();
             await sendToDBMongo(context, submitInfo, dateStr, country);
@@ -40,8 +40,8 @@
             const selectTime = t1 - t0;
     
             message = "You (" + submitInfo.nickname + " from " + country + ") are the " + count.toString() + "th person who prefers " + submitInfo.fruit + " in the MongoDB database. <br>"
-            message += "<span style='color:olive'>It took " + insertTime + " ms to INSERT to free MongoDB Atlas (Singapore AWS). </span><br>";
-            message += "<span style='color:olive'>It took " + selectTime + " ms to SELECT from free MongoDB Atlas (Singapore AWS). </span><br>";  
+            message += "<span style='color:olive'>It took " + insertTime + " ms to INSERT to free MongoDB Atlas in Singapore AWS. </span><br>";
+            message += "<span style='color:olive'>It took " + selectTime + " ms to SELECT from free MongoDB Atlas in Singapore AWS. </span><br>";  
         }
         
         var body = {"message": message, "ok": true};
