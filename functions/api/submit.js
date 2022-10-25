@@ -1,6 +1,8 @@
 /**
  * POST /api/submit
  */
+ import { connect } from '@planetscale/database'
+
  export async function onRequestPost(context) {
 	try {
 		let submitInfo = await context.request.json();
@@ -41,6 +43,29 @@
             message = "You (" + submitInfo.nickname + " from " + country + ") are the " + count.toString() + "th person who prefers " + submitInfo.fruit + " in the MongoDB database. <br>"
             message += "<span style='color:olive'>It took " + insertTime + " ms to INSERT to free MongoDB Atlas in Singapore AWS. </span><br>";
             message += "<span style='color:olive'>It took " + selectTime + " ms to SELECT from free MongoDB Atlas in Singapore AWS. </span><br>";  
+        } else if (submitInfo.database == 'planetscale') {
+            const pscaleConfig = {
+                host: context.env.PSCALE_HOST,
+                username: context.env.PSCALE_USERNAME,
+                password: context.env.PSCALE_PASSWORD
+            };
+            const pscaleConn = connect(pscaleConfig);
+
+            var t0 = Date.now();
+            await pscaleConn.execute('INSERT INTO submitinfo (nickname, fruit, time, country) VALUES (?, ?, ?, ?)', [submitInfo.nickname, submitInfo.fruit, dateStr, country]);
+            var t1 = Date.now();
+            const insertTime = t1 - t0; 
+
+            var t0 = Date.now();
+            const countRes = await pscaleConn.execute('SELECT COUNT(*) FROM submitinfo WHERE fruit = ?', [submitInfo.fruit]);
+            var t1 = Date.now();
+            const selectTime = t1 - t0;
+
+            const countStr = countRes.rows[0][Object.keys(countRes.rows[0])[0]];
+
+            message = "You (" + submitInfo.nickname + " from " + country + ") are the " + countStr + "th person who prefers " + submitInfo.fruit + " in the Planetscale MySQL. <br>"
+            message += "<span style='color:olive'>It took " + insertTime + " ms to INSERT to free Planetscale MySQL in Singapore AWS. </span><br>";
+            message += "<span style='color:olive'>It took " + selectTime + " ms to SELECT from free Planetscale MySQL in Singapore AWS. </span><br>";  
         }
         
         var body = {"message": message, "ok": true};
