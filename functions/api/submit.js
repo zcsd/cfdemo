@@ -47,7 +47,11 @@
             const pscaleConfig = {
                 host: context.env.PSCALE_HOST,
                 username: context.env.PSCALE_USERNAME,
-                password: context.env.PSCALE_PASSWORD
+                password: context.env.PSCALE_PASSWORD,
+                fetch: (url, init) => {
+                    delete (init)["cache"];
+                    return fetch(url, init);
+                }
             };
             const pscaleConn = connect(pscaleConfig);
 
@@ -66,6 +70,27 @@
             message = "You (" + submitInfo.nickname + " from " + country + ") are the " + countStr + "th person who prefers " + submitInfo.fruit + " in the Planetscale MySQL. <br>"
             message += "<span style='color:olive'>It took " + insertTime + " ms to INSERT to free Planetscale MySQL in Singapore AWS. </span><br>";
             message += "<span style='color:olive'>It took " + selectTime + " ms to SELECT from free Planetscale MySQL in Singapore AWS. </span><br>";  
+        } else if (submitInfo.database == 'd1') {
+            var t0 = Date.now();
+            await context.env.CFDEMO_DB.prepare('INSERT INTO submitinfo (nickname, fruit, time, country) VALUES (?1, ?2, ?3, ?4)')
+                    .bind(submitInfo.nickname, submitInfo.fruit, dateStr, country)
+                    .run();
+            var t1 = Date.now();
+            const insertTime = t1 - t0;
+
+            var t0 = Date.now();
+            const countStmt = context.env.CFDEMO_DB.prepare('SELECT COUNT(*) AS total FROM submitinfo WHERE fruit = ?').bind(submitInfo.fruit);
+            let total = await countStmt.first('total');
+            if (total == null) {
+                total = 0;
+            }
+            const countStr = total.toString();
+            var t1 = Date.now();
+            const selectTime = t1 - t0;
+
+            message = "You (" + submitInfo.nickname + " from " + country + ") are the " + countStr + "th person who prefers " + submitInfo.fruit + " in the Cloudflare D1 SQLite. <br>"
+            message += "<span style='color:olive'>It took " + insertTime + " ms to INSERT to Cloudflare D1 SQLite in Asia Pacific. </span><br>";
+            message += "<span style='color:olive'>It took " + selectTime + " ms to SELECT from Cloudflare D1 SQLite in Asia Pacific. </span><br>"; 
         }
         
         var body = {"message": message, "ok": true};
