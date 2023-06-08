@@ -2,9 +2,7 @@
  * GET /api/get-files
  */
 export async function onRequest(context) {
-
-    var message;
-
+    var message = '';
     try {
         const options = {
             limit: 5,
@@ -12,7 +10,11 @@ export async function onRequest(context) {
         }
         const listing = await context.env.IMAGE_BUCKET.list(options);
         console.log(listing.objects.length);
-        message = listing.objects.length.toString();
+        // iterate through listing.objects
+        for (var i = 0; i < listing.objects.length; i++) {
+            message += listing.objects[i].key;
+            message += '  ';
+        }
     } catch (err) {
         return new Response('Bad Request', { status: 400 });
     }

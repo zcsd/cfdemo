@@ -38,7 +38,7 @@
   </form>
   <p id="message" style="font-size:18px"></p>
 </div>
-<input type="button" onclick="getFiles()" value="GetFiles">
+<input type="button" onclick="listFiles()" value="List files in R2 Bucket">
 <p id="message-files" style="font-size:18px"></p>
 
 <script>
@@ -73,8 +73,8 @@ function submitNow() {
   }
 }
 
-function getFiles() {
-  fetch("/api/get-files")
+function listFiles() {
+  fetch("/api/list-files")
     .then(response => response.json())
     .then(dataReceived => {
       if(dataReceived.ok) {
