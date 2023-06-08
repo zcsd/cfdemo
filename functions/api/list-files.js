@@ -13,7 +13,7 @@ export async function onRequest(context) {
         // iterate through listing.objects
         for (var i = 0; i < listing.objects.length; i++) {
             message += listing.objects[i].key;
-            message += '  ';
+            message += '\n';
         }
     } catch (err) {
         return new Response('Bad Request', { status: 400 });
@@ -23,4 +23,4 @@ export async function onRequest(context) {
     var options = { status: 200, headers: { 'Content-Type': 'application/json;charset=utf-8' } }
 
     return new Response(JSON.stringify(body), options);
-}   
+}
