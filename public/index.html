@@ -38,6 +38,8 @@
   </form>
   <p id="message" style="font-size:18px"></p>
 </div>
+<input type="button" onclick="getFiles()" value="GetFiles">
+<p id="message-files" style="font-size:18px"></p>
 
 <script>
 function submitNow() {
@@ -69,6 +71,19 @@ function submitNow() {
       console.log(err);
     })	
   }
+}
+
+function getFiles() {
+  fetch("/api/get-files")
+    .then(response => response.json())
+    .then(dataReceived => {
+      if(dataReceived.ok) {
+        document.getElementById("message-files").innerHTML = "<span style='color: blue;'>" + dataReceived.message + "</span>";
+      }
+    })
+    .catch(err => {
+      console.log(err);
+    })	
 }
 </script>
 
