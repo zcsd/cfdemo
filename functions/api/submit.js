@@ -43,7 +43,7 @@
             message = "You (" + submitInfo.nickname + " from " + country + ") are the " + count.toString() + "th person who prefers " + submitInfo.fruit + " in the MongoDB database. <br>"
             message += "<span style='color:olive'>It took " + insertTime + " ms to INSERT to free MongoDB Atlas in Singapore AWS. </span><br>";
             message += "<span style='color:olive'>It took " + selectTime + " ms to SELECT from free MongoDB Atlas in Singapore AWS. </span><br>";  
-        } else if (submitInfo.database == 'planetscale') {
+        } else if (submitInfo.database == 'planetscale_not_used_anymore') {
             const pscaleConfig = {
                 host: context.env.PSCALE_HOST,
                 username: context.env.PSCALE_USERNAME,
