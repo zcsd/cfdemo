@@ -71,9 +71,11 @@ function submitNow() {
     .then(dataReceived => {
       if(dataReceived.ok) {
         document.getElementById("message").innerHTML = "<span style='color: blue;'>" + dataReceived.message + "</span>";
+        turnstile.reset();
       }
     })
     .catch(err => {
+      turnstile.reset();
       console.log(err);
     })	
   }
