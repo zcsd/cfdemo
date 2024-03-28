@@ -1,8 +1,9 @@
 {
   "dependencies": {
+    "@cloudflare/pages-plugin-turnstile": "^1.0.1",
     "@planetscale/database": "^1.7.0"
   },
   "devDependencies": {
-    "wrangler": "^3.1.0"
+    "wrangler": "^3.39.0"
   }
 }

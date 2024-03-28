@@ -7,6 +7,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Cloudflare Pages Demo</title> 
 <link rel="stylesheet" href="css/style.css">
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer></script>
 </head>
 <body>
   
@@ -32,8 +33,8 @@
       <option value="d1">Cloudflare D1 SQLite in APAC - via official Serverless API</option>
       <option value="mongo">Free Mongo Atlas in Singapore AWS - via official Data API</option>
     </select>
-  
-    <input type="button" onclick="submitNow()" value="Submit">
+    <div class="cf-turnstile" data-sitekey="0x4AAAAAAAVy1elKPSH6xYb4" data-theme="light"></div>
+    <input type="button" id="submitButton" value="Submit" onclick="submitNow()">
   </form>
   <p id="message" style="font-size:18px"></p>
 </div>
@@ -45,7 +46,39 @@
 </div>
 
 <script>
+/*
+document.addEventListener('DOMContentLoaded', function() {
+    var input = document.getElementById('nname');
+    var button = document.getElementById('submitButton');
+    
+    // 初始时禁用按钮
+    //button.disabled = true;
+    
+    // 为输入框添加事件监听器
+    input.addEventListener('input', function() {
+        // 如果输入长度大于等于5，启用按钮，否则禁用
+        //if (input.value.length >= 5) {
+        //    button.disabled = false;
+        //} else {
+        //    button.disabled = true;
+        //}
+    });
+
+    button.addEventListener('click', function(event) {
+      if (!input.value.match(/^[A-Za-z0-9]{5,20}$/)) {
+        console.log('Hello World');
+        document.getElementById("message").innerHTML = "<span style='color: red;'>Submit Error: Nickname must be at least 5 alphanumeric characters.</span>";
+        event.preventDefault();
+      } else {
+        console.log('Hi World');
+        document.getElementById("message").innerHTML = "<span style='color: green;'>Submitting and waiting the reply.....</span>";
+      }
+    });
+});
+*/
 function submitNow() {
+  var turnstileResponse = document.querySelector('[name="cf-turnstile-response"]').value;
+  console.log(turnstileResponse);
   if (!document.getElementById('nname').value.match(/^[A-Za-z0-9]{5,20}$/)) {
     document.getElementById("message").innerHTML = "<span style='color: red;'>Submit Error: Nickname must be at least 5 alphanumeric characters.</span>";
     return;
@@ -54,8 +87,9 @@ function submitNow() {
 		const dataToSend = {
 			"nickname": document.getElementById("nname").value,
 			"fruit": document.getElementById("fruit").value,
-      "database": document.getElementById("database").value
-		}
+      "database": document.getElementById("database").value,
+      'token': turnstileResponse,
+  }
 
   fetch("/api/submit", {
     method: 'POST',

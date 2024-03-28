@@ -1,12 +1,50 @@
 /**
  * POST /api/submit
  */
- import { connect } from '@planetscale/database'
+import { connect } from '@planetscale/database'
 
- export async function onRequestPost(context) {
+import turnstilePlugin from "@cloudflare/pages-plugin-turnstile";
+
+/**
+ * POST /api/submit-with-plugin
+ */
+
+export async function onRequestPost(context) {
 	try {
+        const headers = await context.request.headers;
+        let ip = headers.get('cf-connecting-ip');
+        console.log(ip);
 		let submitInfo = await context.request.json();
+        let token = submitInfo.token;
+        console.log(token);
+        let formData = new FormData();
+        formData.append('secret', SECRET_KEY);
+        formData.append('response', token);
+        formData.append('remoteip', ip);
 
+        console.log("111");
+
+        const result = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+            body: JSON.stringify({
+                response: token,
+                secret: context.env.TURNSTILE_SECRET_KEY,
+            }),
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+            },
+        });
+        console.log("222");
+        const outcome = await result.json();
+        if (!outcome.success) {
+            //return new Response('The provided Turnstile token was not valid! \n' + JSON.stringify(outcome));
+            let message = "The provided Turnstile token was not valid!";
+            var body = {"message": message, "ok": true};
+            var options = { status: 200, headers: { 'Content-Type': 'application/json;charset=utf-8' } }
+    
+            return new Response(JSON.stringify(body), options);
+        }
+        console.log("333");
         var country = context.request.cf.country;
 
         var date = new Date(Date.now());
