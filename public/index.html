@@ -94,10 +94,12 @@ function listFiles() {
     .then(dataReceived => {
       if(dataReceived.ok) {
         document.getElementById("message-files").innerHTML = "<span style='color: blue;'>" + dataReceived.message + "</span>";
+        turnstile.reset();
       }
     })
     .catch(err => {
       console.log(err);
+      turnstile.reset();
     })	
 }
 </script>
