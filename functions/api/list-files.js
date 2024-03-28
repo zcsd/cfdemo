@@ -22,9 +22,9 @@ export async function onRequestPost(context) {
         if (!turnstileOutcome.success) {
             let message = "Failed to pass the Cloudflare Turnstile verification. Please refresh page.";
             var body = {"message": message, "ok": true};
-            var options = { status: 200, headers: { 'Content-Type': 'application/json;charset=utf-8' } }
+            var op = { status: 200, headers: { 'Content-Type': 'application/json;charset=utf-8' } }
     
-            return new Response(JSON.stringify(body), options);
+            return new Response(JSON.stringify(body), op);
         }
 
         const options = {
