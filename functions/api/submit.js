@@ -6,29 +6,28 @@ import { connect } from '@planetscale/database'
 export async function onRequestPost(context) {
 	try {
 		let submitInfo = await context.request.json();
-        let token = submitInfo.token;
-        console.log(token);
+        let turnstile_token = submitInfo.token;
 
-        const result = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+        const turnstileResult = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
             body: JSON.stringify({
-                response: token,
-                secret: context.env.TURNSTILE_SECRET_KEY  //context.env.TURNSTILE_SECRET_KEY  1x0000000000000000000000000000000AA
+                response: turnstile_token,
+                secret: context.env.TURNSTILE_SECRET_KEY 
             }),
             method: 'POST',
             headers: {
                 'content-type': 'application/json',
             },
         });
-        console.log("222");
-        const outcome = await result.json();
-        if (!outcome.success) {
-            let message = "Failed to pass the Cloudflare Turnstile verification. Please try again.";
+
+        const turnstileOutcome = await turnstileResult.json();
+        if (!turnstileOutcome.success) {
+            let message = "Failed to pass the Cloudflare Turnstile verification. Please refresh page.";
             var body = {"message": message, "ok": true};
             var options = { status: 200, headers: { 'Content-Type': 'application/json;charset=utf-8' } }
     
             return new Response(JSON.stringify(body), options);
         }
-        console.log("333");
+
         var country = context.request.cf.country;
 
         var date = new Date(Date.now());
@@ -93,7 +92,6 @@ export async function onRequestPost(context) {
             message += "<span style='color:olive'>It took " + insertTime + " ms to INSERT to free Planetscale MySQL in Singapore AWS. </span><br>";
             message += "<span style='color:olive'>It took " + selectTime + " ms to SELECT from free Planetscale MySQL in Singapore AWS. </span><br>";  
         } else if (submitInfo.database == 'd1') {
-            console.log("5555");
             var t0 = Date.now();
             await context.env.CFDEMO_DB.prepare('INSERT INTO submitinfo (nickname, fruit, time, country) VALUES (?1, ?2, ?3, ?4)')
                     .bind(submitInfo.nickname, submitInfo.fruit, dateStr, country)
@@ -102,13 +100,12 @@ export async function onRequestPost(context) {
             const insertTime = t1 - t0;
 
             var t0 = Date.now();
-            console.log("6666");
             const countStmt = context.env.CFDEMO_DB.prepare('SELECT COUNT(*) AS total FROM submitinfo WHERE fruit = ?').bind(submitInfo.fruit);
             let total = await countStmt.first('total');
             if (total == null) {
                 total = 0;
             }
-            console.log("777");
+
             const countStr = total.toString();
             var t1 = Date.now();
             const selectTime = t1 - t0;
@@ -117,14 +114,15 @@ export async function onRequestPost(context) {
             message += "<span style='color:olive'>It took " + insertTime + " ms to INSERT to Cloudflare D1 SQLite in Asia Pacific. </span><br>";
             message += "<span style='color:olive'>It took " + selectTime + " ms to SELECT from Cloudflare D1 SQLite in Asia Pacific. </span><br>"; 
         }
-        console.log("444");
         
         var body = {"message": message, "ok": true};
         var options = { status: 200, headers: { 'Content-Type': 'application/json;charset=utf-8' } }
 
         return new Response(JSON.stringify(body), options);
 	} catch (err) {
-		return new Response('Bad Request', { status: 400 });
+        var body = {"message": "Internal Server Error, try again later.", "ok": true};
+        var options = { status: 400, headers: { 'Content-Type': 'application/json;charset=utf-8' } }
+		return new Response(JSON.stringify(body), options);
 	}
 }
 

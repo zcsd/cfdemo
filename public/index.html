@@ -46,44 +46,12 @@
 </div>
 
 <script>
-  //0x4AAAAAAAVy1elKPSH6xYb4  1x00000000000000000000AA 
-/*
-document.addEventListener('DOMContentLoaded', function() {
-    var input = document.getElementById('nname');
-    var button = document.getElementById('submitButton');
-    
-    // 初始时禁用按钮
-    //button.disabled = true;
-    
-    // 为输入框添加事件监听器
-    input.addEventListener('input', function() {
-        // 如果输入长度大于等于5，启用按钮，否则禁用
-        //if (input.value.length >= 5) {
-        //    button.disabled = false;
-        //} else {
-        //    button.disabled = true;
-        //}
-    });
-
-    button.addEventListener('click', function(event) {
-      if (!input.value.match(/^[A-Za-z0-9]{5,20}$/)) {
-        console.log('Hello World');
-        document.getElementById("message").innerHTML = "<span style='color: red;'>Submit Error: Nickname must be at least 5 alphanumeric characters.</span>";
-        event.preventDefault();
-      } else {
-        console.log('Hi World');
-        document.getElementById("message").innerHTML = "<span style='color: green;'>Submitting and waiting the reply.....</span>";
-      }
-    });
-});
-*/
 function submitNow() {
-  var turnstileResponse = document.querySelector('[name="cf-turnstile-response"]').value;
-  console.log(turnstileResponse);
   if (!document.getElementById('nname').value.match(/^[A-Za-z0-9]{5,20}$/)) {
     document.getElementById("message").innerHTML = "<span style='color: red;'>Submit Error: Nickname must be at least 5 alphanumeric characters.</span>";
     return;
   } else {
+    var turnstileResponse = document.querySelector('[name="cf-turnstile-response"]').value;
     document.getElementById("message").innerHTML = "<span style='color: green;'>Submitting and waiting the reply.....</span>";
 		const dataToSend = {
 			"nickname": document.getElementById("nname").value,
@@ -112,7 +80,14 @@ function submitNow() {
 }
 
 function listFiles() {
-  fetch("/api/list-files")
+  var turnstileResponse = document.querySelector('[name="cf-turnstile-response"]').value;
+  fetch("/api/list-files",{
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8',
+    },
+    body: JSON.stringify({'token': turnstileResponse})
+  })
     .then(response => response.json())
     .then(dataReceived => {
       if(dataReceived.ok) {
