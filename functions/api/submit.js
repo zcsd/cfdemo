@@ -3,8 +3,6 @@
  */
 import { connect } from '@planetscale/database'
 
-import turnstilePlugin from "@cloudflare/pages-plugin-turnstile";
-
 /**
  * POST /api/submit-with-plugin
  */
